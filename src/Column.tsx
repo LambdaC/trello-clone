@@ -1,19 +1,28 @@
 import { AddNewItem } from "./AddNewItem";
+import { Card } from "./Card";
+import { useAppState } from "./state/AppStateContext";
 import { ColumnContainer, ColumnTitle } from "./style"
 
 type ColumnProps = {
     text: string,
-    children?: React.ReactNode
+    id: string
 }
 
 // 跟上面一样的效果
 // type ColumnProps = React.PropsWithChildren<{ text: string }>
 
-export const Column = ({ text, children }: ColumnProps) => {
+export const Column = ({ text, id }: ColumnProps) => {
+
+    const { getTasksByListId } = useAppState();
+
+    const tasks = getTasksByListId(id);
+
     return (
         <ColumnContainer>
             <ColumnTitle>{text}</ColumnTitle>
-            {children}
+            {tasks.map(task => (
+                <Card text={task.text} key={task.id} id={task.id} />
+            ))}
             <AddNewItem
                 toggleButtonText="+ Add another task"
                 onAdd={console.log}
