@@ -1,6 +1,6 @@
 {
   "name": "trello-clone",
-  "homepage": "https://lambdac.github.io/trello-clone/",
+  "homepage": "./",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
