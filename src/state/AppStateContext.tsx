@@ -1,6 +1,7 @@
 import { createContext, Dispatch, FC, useContext, useReducer } from "react"
 import { Action } from "./actions"
 import { AppState, appStateReducer, List, Task } from "./appStateReducer"
+import { useImmerReducer } from "use-immer"
 
 
 const appData: AppState = {
@@ -31,8 +32,9 @@ type AppStateContextProps = {
 
 const AppStateContext = createContext<AppStateContextProps>({} as AppStateContextProps);
 
+// 使用useImmerReducer替换useReducer,这样appStateReducer就可以直接修改原对象并触发渲染
 export const AppStateProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [state, dispatch] = useReducer(appStateReducer, appData);
+    const [state, dispatch] = useImmerReducer(appStateReducer, appData);
 
     const { lists } = state;
 
