@@ -5,7 +5,6 @@ import { CustomDragLayerContainer, DragPreviewWrapper } from "./style";
 
 export const CustomDragLayer = () => {
     const { draggedItem } = useAppState();
-    // 使用useDragLayer会把默认的拖拽效果隐藏掉
     const { currentOffset } = useDragLayer((monitor) => ({
         currentOffset: monitor.getSourceClientOffset()
     }))
