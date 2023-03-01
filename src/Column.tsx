@@ -1,8 +1,11 @@
+import { useRef } from "react";
+import { useDrop } from "react-dnd";
 import { AddNewItem } from "./AddNewItem";
 import { Card } from "./Card";
-import { addTask } from "./state/actions";
+import { addTask, moveList } from "./state/actions";
 import { useAppState } from "./state/AppStateContext";
 import { ColumnContainer, ColumnTitle } from "./style"
+import { useItemDrag } from "./utils/useItemDrag";
 
 type ColumnProps = {
     text: string,
@@ -14,12 +17,33 @@ type ColumnProps = {
 
 export const Column = ({ text, id }: ColumnProps) => {
 
-    const { getTasksByListId, dispatch } = useAppState();
+    const { draggedItem, getTasksByListId, dispatch } = useAppState();
 
     const tasks = getTasksByListId(id);
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [, drop] = useDrop({
+        accept: "COLUMN",
+        hover() {
+            if (!draggedItem) {
+                return
+            }
+            if (draggedItem.type === "COLUMN") {
+                if (draggedItem.id === id) {
+                    return
+                }
+            }
+            dispatch(moveList(draggedItem.id, id))
+        }
+    });
+
+    drop(ref); // drag的target在这个ref上时，就会调用hover函数
+
+    const { drag } = useItemDrag({ type: "COLUMN", id, text });
+    drag(ref); // 给ref加上个拖拽的监听，拖拽开始时调用item函数，拖拽结束时调用end函数
 
     return (
-        <ColumnContainer>
+        <ColumnContainer ref={ref}>
             <ColumnTitle>{text}</ColumnTitle>
             {tasks.map(task => (
                 <Card text={task.text} key={task.id} id={task.id} />

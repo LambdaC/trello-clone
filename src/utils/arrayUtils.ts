@@ -2,8 +2,22 @@ type Item = {
     id: string
 }
 
-// TItem extends Item ==> interface extends Item{}; 
-// 为什么要用interface，因为Item必须全部匹配，不多不少，而interface只要满足就可以。
+
+// Generic Constraints
+// 为泛型加上一些条件
 export const findItemIndexById = <TItem extends Item>(items: TItem[], id: string) => {
     return items.findIndex((item: TItem) => item.id === id)
+}
+
+export const moveItem = <TItem>(array: TItem[], from: number, to: number) => {
+    const item = array[from];
+    return insertItemAtIndex(removeItemAtIndex(array, from), item, to);
+}
+
+export function removeItemAtIndex<TItem>(array: TItem[], index: number) {
+    return [...array.slice(0, index), ...array.slice(index + 1)]
+}
+
+export function insertItemAtIndex<TItem>(array: TItem[], item: TItem, index: number) {
+    return [...array.slice(0, index), item, ...array.slice(index)]
 }
