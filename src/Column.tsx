@@ -10,13 +10,14 @@ import { useItemDrag } from "./utils/useItemDrag";
 
 type ColumnProps = {
     text: string,
-    id: string
+    id: string,
+    isPreview?: boolean
 }
 
 // 跟上面一样的效果
 // type ColumnProps = React.PropsWithChildren<{ text: string }>
 
-export const Column = ({ text, id }: ColumnProps) => {
+export const Column = ({ text, id, isPreview }: ColumnProps) => {
 
     const { draggedItem, getTasksByListId, dispatch } = useAppState();
 
@@ -44,7 +45,7 @@ export const Column = ({ text, id }: ColumnProps) => {
     drag(ref); // 给ref加上个拖拽的监听，拖拽开始时调用item函数，拖拽结束时调用end函数
 
     return (
-        <ColumnContainer ref={ref} isHidden={isHidden(draggedItem, "COLUMN", id)}>
+        <ColumnContainer isPreview={isPreview} ref={ref} isHidden={isHidden(draggedItem, "COLUMN", id, isPreview)}>
             <ColumnTitle>{text}</ColumnTitle>
             {tasks.map(task => (
                 <Card text={task.text} key={task.id} id={task.id} />
