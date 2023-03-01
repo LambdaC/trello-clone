@@ -5,6 +5,7 @@ import { Card } from "./Card";
 import { addTask, moveList } from "./state/actions";
 import { useAppState } from "./state/AppStateContext";
 import { ColumnContainer, ColumnTitle } from "./style"
+import { isHidden } from "./utils/isHidden";
 import { useItemDrag } from "./utils/useItemDrag";
 
 type ColumnProps = {
@@ -43,7 +44,7 @@ export const Column = ({ text, id }: ColumnProps) => {
     drag(ref); // 给ref加上个拖拽的监听，拖拽开始时调用item函数，拖拽结束时调用end函数
 
     return (
-        <ColumnContainer ref={ref}>
+        <ColumnContainer ref={ref} isHidden={isHidden(draggedItem, "COLUMN", id)}>
             <ColumnTitle>{text}</ColumnTitle>
             {tasks.map(task => (
                 <Card text={task.text} key={task.id} id={task.id} />
