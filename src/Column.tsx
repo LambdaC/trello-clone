@@ -1,12 +1,12 @@
 import { useRef } from "react";
-import { useDrop } from "react-dnd";
 import { AddNewItem } from "./AddNewItem";
 import { Card } from "./Card";
-import { addTask, moveList } from "./state/actions";
+import { addTask } from "./state/actions";
 import { useAppState } from "./state/AppStateContext";
-import { ColumnContainer, ColumnTitle } from "./style"
+import { ColumnContainer, ColumnTitle } from "./style";
 import { isHidden } from "./utils/isHidden";
 import { useItemDrag } from "./utils/useItemDrag";
+import { useItemDrop } from "./utils/useItemDrop";
 
 type ColumnProps = {
     text: string,
@@ -24,21 +24,7 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
     const tasks = getTasksByListId(id);
     const ref = useRef<HTMLDivElement>(null);
 
-    const [, drop] = useDrop({
-        accept: "COLUMN",
-        hover() {
-            if (!draggedItem) {
-                return
-            }
-            if (draggedItem.type === "COLUMN") {
-                if (draggedItem.id === id) {
-                    return
-                }
-            }
-            dispatch(moveList(draggedItem.id, id))
-        }
-    });
-
+    const { drop } = useItemDrop({ type: "COLUMN", id, text });
     drop(ref); // drag的target在这个ref上时，就会调用hover函数
 
     const { drag } = useItemDrag({ type: "COLUMN", id, text });
@@ -48,7 +34,7 @@ export const Column = ({ text, id, isPreview }: ColumnProps) => {
         <ColumnContainer isPreview={isPreview} ref={ref} isHidden={isHidden(draggedItem, "COLUMN", id, isPreview)}>
             <ColumnTitle>{text}</ColumnTitle>
             {tasks.map(task => (
-                <Card text={task.text} key={task.id} id={task.id} />
+                <Card columnId={id} text={task.text} key={task.id} id={task.id} />
             ))}
             <AddNewItem
                 toggleButtonText="+ Add another task"

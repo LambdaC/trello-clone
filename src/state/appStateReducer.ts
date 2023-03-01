@@ -24,7 +24,7 @@ export type AppState = {
 // 使用useImmerReducer之后，传进来的state就可以直接修改并触发渲染了而不需要返回一个新的对象
 // 甚至如果只修改原对象都不需要返回原对象
 export const appStateReducer = (state: AppState, action: Action): AppState | void => {
-    console.log("appStateReducer");
+    // console.log("appStateReducer");
     switch (action.type) {
         case "ADD_LIST":
             return {
@@ -52,7 +52,24 @@ export const appStateReducer = (state: AppState, action: Action): AppState | voi
         case "SET_DRAGGED_ITEM":
             state.draggedItem = action.payload
             break;
+        case "MOVE_CARD":
+            const { draggedItemId, hoveredItemId, sourceColumnId, targetColumnId } = action.payload
+            const sourceColumnIndex = findItemIndexById(state.lists, sourceColumnId)
+            const draggedItemIndex = findItemIndexById(state.lists[sourceColumnIndex].tasks, draggedItemId)
+            const targetColumnIndex = findItemIndexById(state.lists, targetColumnId)
+            const hoveredItemIndex = hoveredItemId ? findItemIndexById(state.lists[targetColumnIndex].tasks, hoveredItemId) : 0
+
+            const card = state.lists[sourceColumnIndex].tasks[draggedItemIndex]
+            state.lists[sourceColumnIndex].tasks.splice(draggedItemIndex, 1)
+            state.lists[targetColumnIndex].tasks.splice(hoveredItemIndex, 0, card)
+            // todo 需要改变state.draggedItem的数据，不然再移动到别的地方时，数据就出问题了。
+            if (state.draggedItem?.type === "CARD") {
+                state.draggedItem.columnId = targetColumnId
+            }
+            // state.lists[sourceColumnIndex].tasks = removeItemAtIndex(state.lists[sourceColumnIndex].tasks, draggedItemIndex)
+            // state.lists[targetColumnIndex].tasks = insertItemAtIndex(state.lists[targetColumnIndex].tasks, card, hoveredItemIndex)
+            break;
         default:
-            return state;
+            return state
     }
 }

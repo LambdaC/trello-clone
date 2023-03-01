@@ -37,7 +37,7 @@ const AppStateContext = createContext<AppStateContextProps>({} as AppStateContex
 
 // 使用useImmerReducer替换useReducer,这样appStateReducer就可以直接修改原对象并触发渲染
 export const AppStateProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
-    console.log("AppStateProvider")
+    // console.log("AppStateProvider")
     const [state, dispatch] = useImmerReducer(appStateReducer, appData);
 
     const { lists, draggedItem } = state;
